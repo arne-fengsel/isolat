@@ -9,11 +9,17 @@ import (
 
 func main() {
 	router := web.NewWebRouter()
+
+	router.AddRoute(opprettIsolatRessurs())
+	http.ListenAndServe(":9998", router)
+}
+
+func opprettIsolatRessurs() *web.Route {
 	r := web.NewRoute()
-	r.Path("/isolat/{id}")
-	r.Method("POST").Method("GET").Method("PUT")
+
+	r.Path("/isolat(/)?")
+	r.Method(web.HttpGet).Method(web.HttpPut)
 	r.Handler(core.NyRestHandler())
 
-	router.AddRoute(r)
-	http.ListenAndServe(":9998", router)
+	return r
 }

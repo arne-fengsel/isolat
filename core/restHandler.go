@@ -1,12 +1,13 @@
 package core
 
 import (
-	"io/ioutil"
+	//"io/ioutil"
 	//	"strconv"
 	//	"time"
 	//"fmt"
 	//	"bytes"
 	//	"io"
+	"encoding/json"
 	"net/http"
 )
 
@@ -19,7 +20,6 @@ func NyRestHandler() *RestHandler {
 }
 
 func (h RestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Test"))
 	switch r.Method {
 	case "GET":
 		h.ReceiveGet(w, r)
@@ -35,15 +35,26 @@ func (h RestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h RestHandler) ReceiveGet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("GET!"))
+	w.Write([]byte("Eksempel på payload: "))
+
+	fange := IsolatFange{FangeTilIsolat: Fange{Id: "1", Navn: "Arne"}, IsoleringsTid: 5}
+
+	encoder := json.NewEncoder(w)
+	encoder.Encode(&fange)
 }
 
 func (h RestHandler) ReceivePut(w http.ResponseWriter, r *http.Request) {
 
-	w.Write([]byte("PUT!"))
-	b, _ := ioutil.ReadAll(r.Body)
-	w.Write([]byte(string(b)))
-	h.mottak.Motta(string(b))
+	decoder := json.NewDecoder(r.Body)
+	fange := IsolatFange{}
+	err := decoder.Decode(&fange)
+
+	if err != nil {
+		http.Error(w, "Invalid content.", 400)
+		return
+	}
+
+	h.mottak.Motta(fange)
 }
 
 func (h RestHandler) ReceiveDelete(w http.ResponseWriter, r *http.Request) {

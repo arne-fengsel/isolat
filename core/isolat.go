@@ -6,11 +6,11 @@ import (
 )
 
 type Isolat struct {
-	fange    string
-	sekunder int
+	fange         Fange
+	IsoleringsTid int
 }
 
 func (i *Isolat) StartSoning() {
-	time.Sleep((5 * time.Second))
-	fmt.Println("Fange løslates: " + i.fange)
+	time.Sleep(time.Duration(i.IsoleringsTid) * time.Second)
+	fmt.Println("Fange " + i.fange.String() + " løslates.")
 }
