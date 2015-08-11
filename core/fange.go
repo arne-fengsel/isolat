@@ -4,6 +4,8 @@ package core
 type IsolatFange struct {
 	FangeTilIsolat Fange
 	IsoleringsTid  int
+	ReplyUrl       string
+	Method         string
 }
 
 //Domeneklasse for en fangerepresentasjon.

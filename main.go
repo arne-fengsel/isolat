@@ -2,9 +2,12 @@
 package main
 
 import (
+	//"fmt"
 	"github.com/goarne/web"
+	//"io/ioutil"
 	"mesan.no/fagark/isolat/core"
 	"net/http"
+	//"os"
 )
 
 func main() {
@@ -22,4 +25,9 @@ func opprettIsolatRessurs() *web.Route {
 	r.Handler(core.NyRestHandler())
 
 	return r
+}
+
+func init() {
+	core.LoadConfig("./config/logging.json")
+	core.Info.Println("Starter isolat.")
 }

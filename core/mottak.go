@@ -11,12 +11,13 @@ func NyttMottak() *Mottak {
 }
 
 func (m *Mottak) Motta(f IsolatFange) {
+	Info.Println("Mottar fange: " + f.FangeTilIsolat.String())
 	m.innKo <- f
 }
 
 func (m *Mottak) HandterMottaksKo() {
 	for f := range m.innKo {
-		isolat := &Isolat{fange: f.FangeTilIsolat, IsoleringsTid: f.IsoleringsTid}
+		isolat := &Isolat{fange: f.FangeTilIsolat, isoleringsTid: f.IsoleringsTid, replyUrl: f.ReplyUrl, method: f.Method}
 		go isolat.StartSoning()
 	}
 
