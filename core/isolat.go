@@ -24,6 +24,12 @@ func (i *Isolat) StartSoning() {
 	client := &http.Client{}
 	req, _ := http.NewRequest(i.method, i.replyUrl, bytes.NewReader(fangeBytes))
 	_, e := client.Do(req)
-	Trace.Println("Fange " + i.fange.String() + " løslates." + e.Error())
+
+	if e != nil {
+		Error.Println("Feil ved request: %v\n", e.Error())
+		return
+	}
+
+	Trace.Println("Fange " + i.fange.String() + " løslates.")
 
 }

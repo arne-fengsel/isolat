@@ -7,14 +7,19 @@ import (
 	//"io/ioutil"
 	"mesan.no/fagark/isolat/core"
 	"net/http"
+	"strconv"
 	//"os"
 )
 
 func main() {
+	appConfig := core.AppConfig{}
+	appConfig.ReadConfig("./config/appconfig.json")
+	core.InitLogFile(appConfig.Logging)
+
 	router := web.NewWebRouter()
 
 	router.AddRoute(opprettIsolatRessurs())
-	http.ListenAndServe(":9998", router)
+	http.ListenAndServe(":"+strconv.FormatInt(appConfig.Server.Port, 10), router)
 }
 
 func opprettIsolatRessurs() *web.Route {
@@ -25,9 +30,4 @@ func opprettIsolatRessurs() *web.Route {
 	r.Handler(core.NyRestHandler())
 
 	return r
-}
-
-func init() {
-	core.LoadConfig("./config/logging.json")
-	core.Info.Println("Starter isolat.")
 }

@@ -11,7 +11,7 @@ func NyttMottak() *Mottak {
 }
 
 func (m *Mottak) Motta(f IsolatFange) {
-	Info.Println("Mottar fange: " + f.FangeTilIsolat.String())
+	Trace.Println("Mottar fange: " + f.FangeTilIsolat.String())
 	m.innKo <- f
 }
 
