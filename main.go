@@ -2,9 +2,8 @@
 package main
 
 import (
-	//"fmt"
+	"flag"
 	"github.com/goarne/web"
-	//"io/ioutil"
 	"mesan.no/fagark/isolat/core"
 	"net/http"
 	"strconv"
@@ -12,20 +11,29 @@ import (
 )
 
 func main() {
+	configFile := flag.String("config", "./config/appconfig.json", "Fullt navn til applikasjonens konfigurasjonsfil (json)")
+	flag.Parse()
+
 	appConfig := core.AppConfig{}
-	appConfig.ReadConfig("./config/appconfig.json")
+	appConfig.ReadConfig(*configFile)
+
 	core.InitLogFile(appConfig.Logging)
 
 	router := web.NewWebRouter()
+	router.AddRoute(opprettIsolatRessurs(appConfig.Server.Root))
 
-	router.AddRoute(opprettIsolatRessurs())
-	http.ListenAndServe(":"+strconv.FormatInt(appConfig.Server.Port, 10), router)
+	port := strconv.FormatInt(appConfig.Server.Port, 10)
+	core.Info.Println("Laster appconfig:", *configFile)
+	core.Info.Println("Starter isolat på port:", port)
+	core.Info.Println("Isolat er tilgjengelig på ", appConfig.Server.Root)
+	core.Info.Println("Skriver til loggfil: ", appConfig.Logging.Filename)
+	http.ListenAndServe(":"+port, router)
 }
 
-func opprettIsolatRessurs() *web.Route {
+func opprettIsolatRessurs(path string) *web.Route {
 	r := web.NewRoute()
 
-	r.Path("/isolat(/)?")
+	r.Path(path)
 	r.Method(web.HttpGet).Method(web.HttpPut)
 	r.Handler(core.NyRestHandler())
 

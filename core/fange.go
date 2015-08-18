@@ -4,7 +4,7 @@ package core
 type IsolatFange struct {
 	FangeTilIsolat Fange
 	IsoleringsTid  int
-	ReplyUrl       string
+	CallbackUrl    string
 	Method         string
 }
 
@@ -15,5 +15,5 @@ type Fange struct {
 }
 
 func (f Fange) String() string {
-	return "Fangenr: " + f.Id + ", navn: " + f.Navn
+	return "[Fangenr: " + f.Id + ", navn: " + f.Navn + "]"
 }

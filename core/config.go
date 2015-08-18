@@ -21,6 +21,7 @@ type LogConfig struct {
 
 type ServerConfig struct {
 	Port int64
+	Root string
 }
 
 func (a *AppConfig) ReadConfig(configFile string) {

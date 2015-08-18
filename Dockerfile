@@ -7,16 +7,16 @@ ADD . /go/src/mesan.no/fagark/isolat
 
 RUN go get github.com/goarne/web
 RUN go install mesan.no/fagark/isolat && \
-	mkdir bin/config && \
-	mkdir bin/log && \
-	cp /go/src/mesan.no/fagark/isolat/config/appconfig.json bin/config/appconfig.json
+	mkdir /config && \
+	mkdir /log && \
+	cp /go/src/mesan.no/fagark/isolat/config/appconfig.json /config/appconfig_docker.json
 	
 
 
 
 EXPOSE 9998
 
-WORKDIR $GOPATH/bin
+WORKDIR /
 
-CMD isolat
+CMD $GOPATH/bin/isolat -config=/config/appconfig_docker.json
 
