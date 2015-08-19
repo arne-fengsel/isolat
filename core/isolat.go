@@ -23,10 +23,15 @@ func (i *Isolat) StartSoning() {
 
 	client := &http.Client{}
 	req, _ := http.NewRequest(i.method, i.callbackUrl, bytes.NewReader(fangeBytes))
-	_, e := client.Do(req)
+	resp, e := client.Do(req)
 
 	if e != nil {
 		Error.Println(i.fange.String(), "Feil ved request: ", e.Error())
+		return
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		Error.Println(i.fange.String(), "Fange ble ikke løslat.")
 		return
 	}
 
