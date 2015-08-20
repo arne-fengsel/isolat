@@ -9,8 +9,8 @@ import (
 )
 
 type AppConfig struct {
-	Server  *ServerConfig
-	Logging *LogConfig
+	Server  ServerConfig
+	Logging LogConfig
 }
 
 type LogConfig struct {

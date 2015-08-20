@@ -7,38 +7,47 @@ import (
 	"mesan.no/fagark/isolat/core"
 	"net/http"
 	"strconv"
-	//"os"
 )
 
 func main() {
+	appConfig := lastAppKonfig()
+
+	core.InitLoggers(appConfig.Logging)
+
+	skrivOppstartsInfo(appConfig)
+
+	http.ListenAndServe(":"+strconv.FormatInt(appConfig.Server.Port, 10), opprettIsolatRessurs(appConfig))
+}
+
+//Logger applikasjonskonfigurasjon
+func skrivOppstartsInfo(appConfig core.AppConfig) {
+	core.Info.Println("Laster appconfig:", appConfig.Logging.Filename)
+	core.Info.Println("Starter isolat på port:", strconv.FormatInt(appConfig.Server.Port, 10))
+	core.Info.Println("Isolat er tilgjengelig på ", appConfig.Server.Root)
+	core.Info.Println("Skriver til loggfil: ", appConfig.Logging.Filename)
+}
+
+//Laster inn applikasjonskonfigurasjon fra en JSON konfigurasjonsfil.
+func lastAppKonfig() core.AppConfig {
+
 	configFile := flag.String("config", "./config/appconfig.json", "Fullt navn til applikasjonens konfigurasjonsfil (json)")
 	flag.Parse()
 
 	appConfig := core.AppConfig{}
 	appConfig.ReadConfig(*configFile)
 
-	logHandle := core.InitLogFile(appConfig.Logging)
-	core.InitLoggers(logHandle, logHandle, logHandle, logHandle)
-
-	router := web.NewWebRouter()
-	router.AddRoute(opprettIsolatRessurs(appConfig.Server.Root))
-
-	port := strconv.FormatInt(appConfig.Server.Port, 10)
-
-	core.Info.Println("Laster appconfig:", *configFile)
-	core.Info.Println("Starter isolat på port:", port)
-	core.Info.Println("Isolat er tilgjengelig på ", appConfig.Server.Root)
-	core.Info.Println("Skriver til loggfil: ", appConfig.Logging.Filename)
-
-	http.ListenAndServe(":"+port, router)
+	return appConfig
 }
 
-func opprettIsolatRessurs(path string) *web.Route {
+//Oppretter REST ressurs for applikasjon
+func opprettIsolatRessurs(appConfig core.AppConfig) *web.WebRouter {
 	r := web.NewRoute()
 
-	r.Path(path)
+	r.Path(appConfig.Server.Root)
 	r.Method(web.HttpGet).Method(web.HttpPut)
 	r.Handler(core.NyRestHandler())
 
-	return r
+	router := web.NewWebRouter()
+	router.AddRoute(r)
+	return router
 }
