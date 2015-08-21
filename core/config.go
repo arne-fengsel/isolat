@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	//"strconv"
 )
 
 type AppConfig struct {
@@ -28,7 +27,7 @@ func (a *AppConfig) ReadConfig(configFile string) {
 	fileContent, e := ioutil.ReadFile(configFile)
 
 	if e != nil {
-		fmt.Println("File error: %v\n", e)
+		fmt.Println("Fant ikke configfil.", e)
 		os.Exit(1)
 	}
 

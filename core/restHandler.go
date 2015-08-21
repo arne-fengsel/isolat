@@ -1,12 +1,6 @@
 package core
 
 import (
-	//"io/ioutil"
-	//	"strconv"
-	//	"time"
-	//"fmt"
-	//	"bytes"
-	//	"io"
 	"encoding/json"
 	"net/http"
 )
@@ -23,12 +17,10 @@ func (h RestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		h.ReceiveGet(w, r)
-	case "PUT":
-		h.ReceivePut(w, r)
-	case "DELETE":
-		h.ReceiveDelete(w, r)
+	case "POST":
+		h.ReceivePost(w, r)
 	case "OPTIONS":
-		w.Write([]byte("The handler supports GET, PUT and DELETE!"))
+		w.Write([]byte("The handler supports GET and POST!"))
 	default:
 		http.Error(w, "Method not supported.", 405)
 		Error.Println("Metode er ikke støttet: ", r.Method)
@@ -38,13 +30,13 @@ func (h RestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h RestHandler) ReceiveGet(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Eksempel på payload: "))
 
-	fange := IsolatFange{FangeTilIsolat: Fange{Id: "1", Navn: "Arne"}, IsoleringsTid: 5}
+	fange := IsolatFange{FangeTilIsolat: Fange{Id: "1ES532KD1", Navn: "Albert Åbert"}, IsoleringsTid: 5, CallbackUrl: "http://dummy.url/", Method: "GET"}
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(&fange)
 }
 
-func (h RestHandler) ReceivePut(w http.ResponseWriter, r *http.Request) {
+func (h RestHandler) ReceivePost(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	fange := IsolatFange{}
@@ -58,8 +50,4 @@ func (h RestHandler) ReceivePut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.mottak.Motta(fange)
-}
-
-func (h RestHandler) ReceiveDelete(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("DELETE!"))
 }

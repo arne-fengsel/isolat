@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"os"
-	//"strconv"
 )
 
 var (
@@ -24,7 +23,7 @@ func opprettLoggFil(config LogConfig) io.Writer {
 	file, err := os.OpenFile(config.Filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 
 	if err != nil {
-		log.Fatalln("Failed to open log file", config.Filename, ":", err)
+		log.Fatalln("Greide ikke åpne loggfil.", config.Filename, ":", err)
 	}
 
 	return io.MultiWriter(file, os.Stdout)

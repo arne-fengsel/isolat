@@ -3,7 +3,7 @@ package core
 import (
 	"bytes"
 	"encoding/json"
-	//"fmt"
+	"errors"
 	"net/http"
 	"time"
 )
@@ -17,8 +17,17 @@ type Isolat struct {
 
 func (i *Isolat) StartSoning() {
 	Trace.Println(i.fange.String(), "Fange starter isolat.")
-
 	time.Sleep(time.Duration(i.isoleringsTid) * time.Second)
+
+	if err := i.AvsluttSoning(); err != nil {
+		Error.Println(i.fange.String(), "Fange ble ikke løslat.", err)
+		return
+	}
+
+	Trace.Println(i.fange.String(), "Fange slippes fri fra isolat.")
+}
+
+func (i *Isolat) AvsluttSoning() error {
 	fangeBytes, _ := json.Marshal(i.fange)
 
 	client := &http.Client{}
@@ -26,15 +35,12 @@ func (i *Isolat) StartSoning() {
 	resp, e := client.Do(req)
 
 	if e != nil {
-		Error.Println(i.fange.String(), "Feil ved request: ", e.Error())
-		return
+		return errors.New("Det oppstod en feil." + e.Error())
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		Error.Println(i.fange.String(), "Fange ble ikke løslat.")
-		return
+		return errors.New("Feil svar fra server." + resp.Status)
 	}
 
-	Trace.Println(i.fange.String(), "Fange løslates.")
-
+	return nil
 }
